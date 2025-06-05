@@ -85,7 +85,19 @@ exports.protect = async (req , res , next) => {
              res.status(401).json({"message" : "user not found"});
         }
         // verify password not changed after token is send
+        if (currentUser.changedAt) {
+            const changedTimestamp = parseInt(
+                currentUser.changedPasswordAt.getTime() / 1000, 
+                10
+            );
 
+            if (decoded.iat < changedTimestamp) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Password was changed recently - Please log in again"
+                });
+            }
+        }
         // if token is valide
         req.user = currentUser;
         next();

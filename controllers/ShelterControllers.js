@@ -92,6 +92,79 @@
         
     }
  };
- exports.delete = async (params) => {
-    
+ exports.deleteShelter = async (res , req) => {
+    try{
+        const userToken = req.user; 
+        if(!userToken){
+            return res.status(404).json({"message" : "you are not loggin"});
+        }
+    if (!req.body._id) {
+            return res.status(400).json({
+                success: false,
+                message: "Shelter ID is required"
+            });}
+    const id = req.body["_id"];
+    shelter = Shelter.findById(id);
+        if(!shelter){
+            return res.status(400).json({
+            "success": false,
+            "message": "Shelter not found ",
+            "data": shelter
+        });
+        }
+        const deleteShelter = Shelter.findOneAndDelete({_id : id});
+        if(!deleteShelter){
+            return res.status(500).json({
+                success: false,
+                message: "Failed to delete shelter"
+            });
+        }
+            return res.status(400).json({
+            "success": false,
+            "message": "Shelter deleted successfully "
+            
+        });        
+    }catch(error){
+        console.error(error);
+        res.status(500).json({
+            "success" : false ,
+            "message" : error,
+            "data" : null
+        });
+    }
+ }
+  exports.getShelter = async (res , req) => {
+    try{
+        const userToken = req.user; 
+        if(!userToken){
+            return res.status(404).json({"message" : "you are not loggin"});
+        }
+        if (!req.body._id) {
+            return res.status(400).json({
+                success: false,
+                message: "Shelter ID is required"
+            });}
+        const id = req.body["_id"];
+        shelter = Shelter.findById(id);
+        if(!shelter){
+            return res.status(400).json({
+            "success": false,
+            "message": "Shelter not found ",
+            "data": shelter
+        });
+        }
+        return res.status(200).json({
+            "success": true,
+            "message": "Shelter found successfully",
+            "data": shelter
+        });
+
+    }catch(error){
+        console.error(error);
+        res.status(500).json({
+            "success" : false ,
+            "message" : error,
+            "data" : null
+        });
+    }
  }
